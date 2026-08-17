@@ -1,5 +1,35 @@
 import { Monster } from "./monster.js";
 
+export class Seapunk extends Monster {
+    constructor() {
+        super("Seapunk", 44, 46, "./images/StS2_Seapunk.webp");
+    }
+
+    seaKick(log) {
+        this.attack(opponent, log, 11);
+    }
+
+    spinningKick(opponent, log) {
+        this.multiAtk(opponent, log, 2, 4);
+    }
+
+    bubbleBurp(log) {
+        this.gainBlock(log, 7);
+        this.buffStr(log, 1);   
+    }
+
+    onTurn(turn, opponent, log) {
+        super.onTurn(turn, opponent, log);
+        if (turn % 3 == 1) {
+            this.seaKick(opponent, log);
+        } else if (turn % 3 == 2) {
+            this.spinningKick(opponent, log);
+        } else {
+            this.bubbleBurp(opponent, log);
+        }
+    }
+}
+
 export class SludgeSpinner extends Monster {
     constructor() {
         super("Sludge Spinner", 37, 39, "./images/StS2_Sludge_Spinner.webp");
@@ -41,6 +71,58 @@ export class SludgeSpinner extends Monster {
             }
             const selectedMove = availableMoves[Math.floor(Math.random() * availableMoves.length)];
             selectedMove.call(this, opponent, log);
+        }
+    }
+}
+
+export class CalcifiedCultist extends Monster {
+    constructor() {
+        super("Calcified Cultist", 38, 41, "./images/StS2_Calcified_Cultist.webp");
+        this.ritual = false;
+    }
+    incatation(log) {
+        log.push("Calcified Cultist calls out an incantation...");
+        log.push("OUR POWER IS UNMATCHED!");
+        this.ritual = true;
+    }
+    darkStrike(opponent, log) {
+        this.attack(opponent, log, 9);
+    }
+    onTurn(turn, opponent, log) {
+        super.onTurn(turn, opponent, log);
+        if (this.ritual == true) {
+            this.buffStr(log, 2);
+        }
+        if (turn == 1) {
+            this.incatation(log);
+        } else {
+           this.darkStrike(opponent, log);
+        }
+    }
+}
+
+export class DampCultist extends Monster {
+    constructor() {
+        super("Damp Cultist", 51, 53, "./images/StS2_Damp_Cultist.webp");
+        this.ritual = false;
+    }
+    incatation(log) {
+        log.push("Damp Cultist calls out an incantation...");
+        log.push("CAW! CAAAAW");
+        this.ritual = true;
+    }
+    darkStrike(opponent, log) {
+        this.attack(opponent, log, 1);
+    }
+    onTurn(turn, opponent, log) {
+        super.onTurn(turn, opponent, log);
+        if (this.ritual == true) {
+            this.buffStr(log, 5);
+        }
+        if (turn == 1) {
+            this.incatation(log);
+        } else {
+           this.darkStrike(opponent, log);
         }
     }
 }

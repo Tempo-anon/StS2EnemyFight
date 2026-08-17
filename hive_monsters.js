@@ -6,7 +6,7 @@ export class HunterKiller extends Monster {
         this.lastMove = "None";
     }
     tenderizingGoop(log) {
-        log("Hunter Killer applies tenderizing goop! (But nothing happened)");
+        log.push("Hunter Killer applies tenderizing goop! (But nothing happened)");
     }
     bite(opponent, log) {
         this.attack(opponent, log, 17);

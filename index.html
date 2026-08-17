@@ -28,6 +28,21 @@
     .hp-fill { background: #4caf50; height: 100%; width: 100%; transition: width 0.3s; }
     #img1 { transform: scaleX(-1); }
     
+    /* Bet Indicator Badge */
+    .bet-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #ffbf00;
+      color: #000;
+      font-weight: bold;
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 12px;
+      display: none;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+
     /* Betting Option Controls */
     .bet-option { margin-top: 12px; font-size: 14px; background: #2a2a2a; padding: 6px; border-radius: 6px; cursor: pointer; display: block; }
     .bet-option input { cursor: pointer; margin-right: 6px; }
@@ -57,6 +72,7 @@
   <div class="battlefield">
     <!-- Fighter 1 -->
     <div class="card">
+      <div id="betBadge1" class="bet-badge">👑 Your Bet</div>
       <select id="sel1" onchange="resetBattle()"></select>
       <img id="img1" src="" alt="Monster 1">
       <div class="hp-bar"><div id="hp1" class="hp-fill"></div></div>
@@ -70,6 +86,7 @@
 
     <!-- Fighter 2 -->
     <div class="card">
+      <div id="betBadge2" class="bet-badge">👑 Your Bet</div>
       <select id="sel2" onchange="resetBattle()"></select>
       <img id="img2" src="" alt="Monster 2">
       <div class="hp-bar"><div id="hp2" class="hp-fill"></div></div>
@@ -83,8 +100,8 @@
   </div>
 
   <button id="turnBtn" onclick="nextTurn()">Start Battle</button>
-  <button onclick="randomizeFighters()">🎲 Randomize</button>
   <button onclick="swapFighters()">⇄ Swap</button>
+  <button onclick="randomizeFighters()">🎲 Randomize</button>
   <button onclick="resetBattle()">Reset</button>
 
   <h3>Combat Log</h3>
@@ -194,6 +211,12 @@
       container.innerHTML = badgesHTML;
     }
 
+    function updateBetBadge() {
+      const chosenBet = document.querySelector('input[name="bet"]:checked').value;
+      document.getElementById('betBadge1').style.display = chosenBet === "1" ? "block" : "none";
+      document.getElementById('betBadge2').style.display = chosenBet === "2" ? "block" : "none";
+    }
+
     function updateUI() {
       // Images
       document.getElementById('img1').src = fighter1.image;
@@ -211,7 +234,15 @@
       
       // Update streak UI
       document.getElementById('streakCount').textContent = winStreak;
+
+      // Update active bet badge display
+      updateBetBadge();
     }
+
+    // Radio change listeners for live badge updates
+    document.querySelectorAll('input[name="bet"]').forEach(radio => {
+      radio.addEventListener('change', updateBetBadge);
+    });
 
     window.nextTurn = function() {
       let logDiv = document.getElementById('log');
