@@ -5,7 +5,7 @@ export class Seapunk extends Monster {
         super("Seapunk", 44, 46, "./images/StS2_Seapunk.webp");
     }
 
-    seaKick(log) {
+    seaKick(opponent, log) {
         this.attack(opponent, log, 11);
     }
 
