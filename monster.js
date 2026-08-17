@@ -31,7 +31,7 @@ export class Monster {
     }
 
     attack(opponent, log, dmg) {
-        let baseDmg = dmg + this.strength; 
+        let baseDmg = Math.max(0, dmg + this.strength); 
         let weakDmg = this.weakTurns > 0 ? Math.floor(0.75 * baseDmg) : baseDmg; 
         let dmgAfterVuln = opponent.vulnTurns > 0 ? Math.floor(1.5 * weakDmg) : weakDmg;
 
@@ -104,6 +104,16 @@ export class Monster {
         } else {
             opponent.vulnTurns += vulnAmt;
             log.push(`${opponent.name} has become vulnerable for ${vulnAmt} turns!`)
+        }
+    }
+
+    applyNegStrength(opponent, log, negAmt) {
+        if (opponent.artifact > 0) {
+            log.push(`${opponent.name}'s artifact blocked the debuff!`);
+            opponent.artifact -= 1;
+        } else {
+            opponent.strength -= negAmt;
+            log.push(`${opponent.name} lost ${negAmt} strength!`)
         }
     }
 }

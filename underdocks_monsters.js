@@ -235,3 +235,197 @@ export class TerrorEel extends Monster {
         }
     }
 }
+
+export class LagavulinMatriarch extends Monster {
+    constructor() {
+        super("Lagavulin Matriarch", 222, 222, "./images/StS2_Lagavulin_Matriarch.webp");
+        this.plating = 12;
+        this.woke = false;
+        this.wakeTurn = 0;
+    }
+
+    wake(log) {
+        log.push("❗ Lagavulin Matriarch has woken up!");
+        this.plating = 0;
+    }
+
+    sleep(log) {
+        log.push("💤 Lagavulin Matriarch is sleeping...");
+    }
+
+    slash(opponent, log) {
+        this.attack(opponent, log, 19);
+    }
+
+    disembowel(opponent, log) {
+        this.multiAtk(opponent, log, 9, 2);
+    }
+
+    slash2(opponent, log) {
+        this.attack(opponent, log, 12);
+        this.gainBlock(log, 12);
+    }
+
+    soulSiphon(opponent, log) {
+        this.applyNegStrength(opponent, log, 2);
+        this.buffStr(log, 2);
+    }
+
+    onTurn(turn, opponent, log) {
+        super.onTurn(turn, opponent, log);
+        if (this.woke == false) {
+            if (this.hp < 222 || turn == 3) {
+                this.woke = true;
+                this.wakeTurn = turn;
+                this.wake(log);
+                return;
+            } else {
+                this.sleep(log);
+                return;
+            }
+        }
+
+        if (this.wakeTurn % 4 == 1) {
+            this.slash(opponent, log);
+        } else if (this.wakeTurn % 4 == 2) {
+            this.disembowel(opponent, log);
+        } else if (this.wakeTurn % 4 == 3) {
+            this.slash2(opponent, log);
+        } else {
+            this.soulSiphon(opponent, log);
+        }
+        this.wakeTurn += 1;
+    }
+}
+
+export class SoulFysh extends Monster {
+    constructor() {
+        super("Soul Fysh", 211, 211, "./images/StS2_Soul_Fysh.webp");
+    }
+
+    beckon(log) {
+        log.push("Soul Fysh beckoned! (But nothing happened)");
+    }
+
+    deGas(opponent, log) {
+        this.attack(opponent, log, 16);
+    }
+
+    gaze(opponent, log) {
+        this.attack(opponent, log, 7);
+    }
+
+    fade(log) {
+        this.intangible += 2;
+        log.push("Soul Fysh faded away!");
+    }
+
+    scream(opponent, log) {
+        this.attack(opponent, log, 13);
+        this.applyVuln(opponent, log, 3);
+    }
+
+    onTurn(turn, opponent, log) {
+        super.onTurn(turn, opponent, log);
+        if (turn % 5 == 1) {
+            this.beckon(log);
+        } else if (turn % 5 == 2) {
+            this.deGas(opponent, log);
+        } else if (turn % 5 == 3) {
+            this.gaze(opponent, log);
+        } else if (turn % 5 == 4) {
+            this.fade(log);
+        } else {
+            this.scream(opponent, log);
+        }
+    }
+}
+
+export class WaterfallGiant extends Monster {
+    constructor() {
+        super("Waterfall Giant", 999, 999, "./images/StS2_Waterfall_Giant.webp");
+        this.steam = 0;
+        this.pressure = 0;
+        this.nextTurnAboutToBlow = false;
+        this.nextTurnExplode = false;
+        this.exploded = false;
+    }
+
+    pressurize(log) {
+        log.push("Waterfall Giant is building pressure!");
+        this.steam += 15;
+    }
+
+    stomp(opponent, log) {
+        this.attack(opponent, log, 15);
+        this.applyWeak(opponent, log, 1);
+        this.steam += 3;
+    }
+
+    ram(opponent, log) {
+        this.attack(opponent, log, 7);
+        this.steam += 3;
+    }
+
+    siphon(log) {
+        this.heal(log, 15);
+        this.steam += 3;
+    }
+
+    pressureGun(opponent, log) {
+        this.attack(opponent, log, 20 + 5 * this.pressure);
+        this.steam += 3;
+    }
+
+    pressureUp(opponent, log) {
+        this.attack(opponent, log, 13);
+        this.steam += 3;
+    }
+
+    aboutToBlow(log) {
+        this.vulnTurns = 0;
+        this.weakTurns = 0;
+        log.push("⚠️ Waterfall Giant is about to explode!")
+        this.nextTurnExplode = true;
+    }
+
+    explode(opponent, log) {
+        this.attack(opponent, log, this.steam);
+        this.hp = 0;
+        log.push("💣 Waterfall Giant exploded!");
+    }
+
+    onTurn(turn, opponent, log) {
+        super.onTurn(turn, opponent, log);
+        if (this.exploded) {
+            return;
+        }
+        if (this.nextTurnExplode) {
+            this.explode(opponent, log);
+            return;
+        }
+       
+        if (this.nextTurnAboutToBlow == false && this.hp <= (999 - 240)) {
+            this.nextTurnAboutToBlow = true;
+        }
+        if (this.nextTurnAboutToBlow) {
+            this.aboutToBlow(log);
+            return;
+        }
+
+        if (turn == 1) {
+            this.pressurize(log);
+        } else if ((turn - 1) % 5 == 1) {
+            this.stomp(opponent, log);
+        } else if ((turn - 1) % 5 == 2) {
+            this.ram(opponent, log);
+        } else if ((turn - 1) % 5 == 3) {
+            this.siphon(log);
+        } else if ((turn - 1) % 5 == 4) {
+            this.pressureGun(opponent, log);
+        } else {
+            this.pressureUp(opponent, log);
+        }
+        
+    }
+}

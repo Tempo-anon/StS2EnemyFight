@@ -1,5 +1,41 @@
 import { Monster } from "./monster.js";
 
+export class HunterKiller extends Monster {
+    constructor() {
+        super("Hunter Killer", 121, 121, "./images/StS2_Hunter_Killer.webp");
+        this.lastMove = "None";
+    }
+    tenderizingGoop(log) {
+        log("Hunter Killer applies tenderizing goop! (But nothing happened)");
+    }
+    bite(opponent, log) {
+        this.attack(opponent, log, 17);
+        this.lastMove = "bite";
+    }
+    puncture(opponent, log) {
+        this.multiAtk(opponent, log, 7, 3);
+        this.lastMove = "puncture";
+    }
+    
+    onTurn(turn, opponent, log) {
+        super.onTurn(turn, opponent, log);
+
+        if (turn == 1) {
+            this.tenderizingGoop(log);
+            return;
+        }
+
+        if (this.lastMove = "bite") {
+            this.puncture(opponent, log);
+            return;
+        }
+
+        let availableMoves = [this.bite, this.puncture, this.puncture];
+        const selectedMove = availableMoves[Math.floor(Math.random() * availableMoves.length)];
+        selectedMove.call(this, opponent, log);
+    }
+}
+
 export class MysteriousKnight extends Monster {
     constructor() {
         super("Mysterious Knight", 145, 145, "./images/StS2_Mysterious_Knight.webp");
@@ -75,10 +111,11 @@ export class Entomancer extends Monster {
     }
 }
 
+// TODO: Using strength instead of vital spark
 export class InfestedPrism extends Monster {
     constructor() {
         super("Infested Prism", 161, 161, "./images/StS2_Infested_Prism.webp");
-        this.hive = 1;
+        this.strength = 2;
     }
     jab(opponent, log) {
         this.attack(opponent, log, 15);
@@ -93,14 +130,15 @@ export class InfestedPrism extends Monster {
     pulsate(opponent, log) {
         this.attack(opponent, log, 8);
         this.gainBlock(log, 20);
+        this.buffStr(log, 2);
     }
     onTurn(turn, opponent, log) {
         super.onTurn(turn, opponent, log);
-        if (turn % 5 == 1) {
+        if (turn % 4 == 1) {
             this.jab(opponent, log);
-        } else if (turn % 5 == 2) {
+        } else if (turn % 4 == 2) {
             this.radiate(opponent, log);
-        } else if (turn % 5 == 3) {
+        } else if (turn % 4 == 3) {
             this.whirlwind(opponent, log);
         } else {
             this.pulsate(opponent, log);

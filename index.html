@@ -84,6 +84,7 @@
 
   <button id="turnBtn" onclick="nextTurn()">Start Battle</button>
   <button onclick="randomizeFighters()">🎲 Randomize</button>
+  <button onclick="swapFighters()">⇄ Swap</button>
   <button onclick="resetBattle()">Reset</button>
 
   <h3>Combat Log</h3>
@@ -129,6 +130,14 @@
       updateUI();
     }
 
+    window.swapFighters = function() {
+      const tempIndex = sel1.selectedIndex;
+      sel1.selectedIndex = sel2.selectedIndex;
+      sel2.selectedIndex = tempIndex;
+
+      resetBattle();
+    }
+
     window.randomizeFighters = function() {
       if (monsterClasses.length === 0) return;
 
@@ -171,6 +180,12 @@
       }
       if (monster.plating > 0) {
         badgesHTML += `<span class="badge badge-plating">🪖 Plating (${monster.plating})</span>`;
+      }
+      if (monster.steam > 0) {
+        badgesHTML += `<span class="badge badge-plating">💨 Steam Eruption (${monster.steam})</span>`;
+      }
+      if (monster.intangible > 0) {
+        badgesHTML += `<span class="badge badge-intangible">👻 Intangible (${monster.intangible})</span>`;
       }
       if (monster.soaring == true) {
         badgesHTML += `<span class="badge badge-soaring">🦉 Soaring </span>`;
