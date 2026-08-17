@@ -10,15 +10,24 @@ export class Monster {
     this.block = 0;
     this.artifact = 0;
     this.slippery = 0;
+    this.intangible = 0;
+    this.plating = 0;
+
     }
 
     onTurn(turn, opponent, log) {
         this.block = 0; // Reset block at start of turn
+        if (opponent.plating > 0) {
+            log.push(`${opponent.name} has ${opponent.plating} plating!`)
+            opponent.block += opponent.plating;
+        }
     }
 
     endTurn(turn, opponent, log) {
         if (this.weakTurns > 0) this.weakTurns -= 1;
         if (this.vulnTurns > 0) this.vulnTurns -= 1;
+        if (this.intangible > 0) this.intangible -= 1;
+        if (this.plating > 0) this.plating -= 1;
     }
 
     attack(opponent, log, dmg) {
@@ -41,6 +50,11 @@ export class Monster {
                 opponent.slippery -= 1;
             }
 
+            if (opponent.intangible > 0) {
+                log.push(`👻 ${opponent.name} is intangible!`);
+                dmgAfterBlock = 1;
+            }
+
             opponent.hp = Math.max(0, opponent.hp - dmgAfterBlock);
             log.push(`💥 ${opponent.name} takes ${dmgAfterBlock} damage!`);
         }
@@ -56,9 +70,9 @@ export class Monster {
     gainBlock(log, blockAmt) {
         this.block += blockAmt;
         log.push(`🛡️ ${this.name} gains ${blockAmt} block!`);
-        }
+    }
 
-        buffStr(log, strAmt) {
+    buffStr(log, strAmt) {
         this.strength += strAmt;
         log.push(`💪 ${this.name} gains ${strAmt} strength!`);
     }

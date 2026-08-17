@@ -5,3 +5,4 @@ Todo list
 - [ ] Randomized health range
 - [ ] A8 health/block values
 - [ ] A9 damage values
+- [ ] Add in relics for enemies

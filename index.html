@@ -102,7 +102,8 @@
       sel2.add(new Option(tempInstance.name, index));
     });
     if (monsterClasses.length > 1) {
-      sel2.selectedIndex = 1;
+      sel1.selectedIndex = Math.floor(Math.random() * monsterClasses.length);
+      sel2.selectedIndex = Math.floor(Math.random() * monsterClasses.length);
     }
 
     // Battle State Variables

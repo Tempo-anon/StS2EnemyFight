@@ -1,51 +1,8 @@
 import {Nibbit, FuzzyWurmCrawler, Mawler, Byrdonis, BygoneEffigy, ShrinkerBeetle, CubexConstruct, VineShambler, Vantom, KinPriest, CeremonialBeast} from "./overgrowth_monsters.js";
+import { SludgeSpinner, FossilStalker, HauntedShip, PunchConstruct, SewerClam, TerrorEel } from "./underdocks_monsters.js";
 import { Monster } from "./monster.js";
 
-export class SludgeSpinner extends Monster {
-    constructor() {
-        super("Sludge Spinner", 37, 39, "./images/StS2_Sludge_Spinner.webp");
-        this.lastMove = "None";
-    }
 
-    oilSpray(opponent, log) {
-        this.attack(opponent, log, 8);
-        this.applyWeak(opponent, log, 1);
-        this.lastMove = "oilSpray";
-    }
-
-    slam(opponent, log) {
-        this.attack(opponent, log, 11);
-        this.lastMove = "slam";
-    }
-
-    rage(opponent, log) {
-        this.attack(opponent, log, 3);
-        this.buffStr(log, 3);
-        this.lastMove = "rage";
-    }
-
-    onTurn(turn, opponent, log) {
-        super.onTurn(turn, opponent, log);
-        if (turn == 1) {
-            this.oilSpray(opponent, log);
-            this.lastMove == "oilSpray";
-        } else {
-            let availableMoves = [this.oilSpray, this.slam, this.rage];
-            
-            if (this.lastMove == "oilSpray") {
-                availableMoves = availableMoves.filter(move => move !== this.oilSpray);
-            }
-            if (this.lastMove == "slam") {
-                availableMoves = availableMoves.filter(move => move !== this.slam);
-            }
-            if (this.lastMove == "rage") {
-                availableMoves = availableMoves.filter(move => move !== this.rage);
-            }
-            const selectedMove = availableMoves[Math.floor(Math.random() * availableMoves.length)];
-            selectedMove.call(this, opponent, log);
-        }
-    }
-}
 
 export class Entomancer extends Monster {
     constructor() {
@@ -144,4 +101,6 @@ export class MechaKnight extends Monster {
 }
 
 
-export const monsterClasses = [Nibbit, FuzzyWurmCrawler, Mawler, Byrdonis, BygoneEffigy, ShrinkerBeetle, CubexConstruct, VineShambler, Vantom, KinPriest, CeremonialBeast, SludgeSpinner, Entomancer, MechaKnight];
+export const monsterClasses = [Nibbit, FuzzyWurmCrawler, Mawler, Byrdonis, BygoneEffigy, ShrinkerBeetle, CubexConstruct, VineShambler, Vantom, KinPriest, CeremonialBeast, 
+    SludgeSpinner, FossilStalker, HauntedShip, PunchConstruct, SewerClam, TerrorEel,
+    Entomancer, MechaKnight];
