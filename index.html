@@ -5,15 +5,33 @@
   <title>StS2 Monster Battle Simulator</title>
   <style>
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background: #121212; color: #fff; margin: 20px; }
+    
+    /* Top Right Streak Display */
+    .streak-tracker {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: #1e1e1e;
+      border: 1px solid #333;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 16px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    }
+    .streak-tracker span { color: #ffbf00; font-size: 18px; }
+
     .battlefield { display: flex; justify-content: center; gap: 40px; margin: 20px 0; }
     .card { background: #1e1e1e; padding: 20px; border-radius: 12px; width: 220px; border: 1px solid #333; position: relative; }
     .card img { width: 120px; height: 120px; object-fit: contain; margin: 10px 0; background: #2a2a2a; border-radius: 8px; padding: 5px; }
     .hp-bar { background: #444; height: 18px; border-radius: 9px; overflow: hidden; margin: 10px 0; }
     .hp-fill { background: #4caf50; height: 100%; width: 100%; transition: width 0.3s; }
-    #img1 {
-    transform: scaleX(-1);
-    }
+    #img1 { transform: scaleX(-1); }
     
+    /* Betting Option Controls */
+    .bet-option { margin-top: 12px; font-size: 14px; background: #2a2a2a; padding: 6px; border-radius: 6px; cursor: pointer; display: block; }
+    .bet-option input { cursor: pointer; margin-right: 6px; }
+
     /* Status Badges Styling */
     .status-container { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; min-height: 32px; margin-top: 8px; }
     .badge { font-size: 12px; padding: 4px 8px; border-radius: 12px; font-weight: bold; display: inline-flex; align-items: center; gap: 3px; }
@@ -31,6 +49,9 @@
 </head>
 <body>
 
+  <!-- Streak Display -->
+  <div class="streak-tracker">🔥 Win Streak: <span id="streakCount">0</span></div>
+
   <h1>Slay the Spire 2 Monster Battle</h1>
 
   <div class="battlefield">
@@ -41,6 +62,10 @@
       <div class="hp-bar"><div id="hp1" class="hp-fill"></div></div>
       <div id="status1">100 / 100 HP</div>
       <div id="badges1" class="status-container"></div>
+      
+      <label class="bet-option">
+        <input type="radio" name="bet" value="1" checked> Bet on Fighter 1
+      </label>
     </div>
 
     <!-- Fighter 2 -->
@@ -50,10 +75,15 @@
       <div class="hp-bar"><div id="hp2" class="hp-fill"></div></div>
       <div id="status2">100 / 100 HP</div>
       <div id="badges2" class="status-container"></div>
+
+      <label class="bet-option">
+        <input type="radio" name="bet" value="2"> Bet on Fighter 2
+      </label>
     </div>
   </div>
 
   <button id="turnBtn" onclick="nextTurn()">Start Battle</button>
+  <button onclick="randomizeFighters()">🎲 Randomize</button>
   <button onclick="resetBattle()">Reset</button>
 
   <h3>Combat Log</h3>
@@ -71,13 +101,16 @@
       sel1.add(new Option(tempInstance.name, index));
       sel2.add(new Option(tempInstance.name, index));
     });
-    sel2.selectedIndex = 1;
+    if (monsterClasses.length > 1) {
+      sel2.selectedIndex = 1;
+    }
 
     // Battle State Variables
     let fighter1 = null;
     let fighter2 = null;
     let currentTurn = 1;
     let isBattleActive = false;
+    let winStreak = 0;
 
     window.resetBattle = function() {
       fighter1 = new monsterClasses[sel1.value]();
@@ -85,11 +118,32 @@
       currentTurn = 1;
       isBattleActive = false;
 
+      // Re-enable radio buttons for new betting
+      document.querySelectorAll('input[name="bet"]').forEach(r => r.disabled = false);
+
       document.getElementById('turnBtn').textContent = "Start Battle";
       document.getElementById('turnBtn').disabled = false;
-      document.getElementById('log').innerHTML = "<p>Select monsters and click Start Battle!</p>";
+      document.getElementById('log').innerHTML = "<p>Place your bet and click Start Battle!</p>";
 
       updateUI();
+    }
+
+    window.randomizeFighters = function() {
+      if (monsterClasses.length === 0) return;
+
+      const idx1 = Math.floor(Math.random() * monsterClasses.length);
+      let idx2 = Math.floor(Math.random() * monsterClasses.length);
+
+      if (monsterClasses.length > 1) {
+        while (idx2 === idx1) {
+          idx2 = Math.floor(Math.random() * monsterClasses.length);
+        }
+      }
+
+      sel1.selectedIndex = idx1;
+      sel2.selectedIndex = idx2;
+
+      resetBattle();
     }
 
     function renderBadges(monster, badgeDivId) {
@@ -132,6 +186,9 @@
       // Status Effect Badges
       renderBadges(fighter1, 'badges1');
       renderBadges(fighter2, 'badges2');
+      
+      // Update streak UI
+      document.getElementById('streakCount').textContent = winStreak;
     }
 
     window.nextTurn = function() {
@@ -140,8 +197,16 @@
 
       if (!isBattleActive) {
         isBattleActive = true;
+        
+        // Lock in bets on start
+        document.querySelectorAll('input[name="bet"]').forEach(r => r.disabled = true);
+
         document.getElementById('turnBtn').textContent = "Next Turn";
         logDiv.innerHTML = "";
+        
+        const chosenBet = document.querySelector('input[name="bet"]:checked').value;
+        const betTargetName = chosenBet === "1" ? fighter1.name : fighter2.name;
+        logMessages.push(`🎯 <strong>You bet on: ${betTargetName}</strong>`);
         logMessages.push(`⚔️ <strong>Battle Started: ${fighter1.name} vs ${fighter2.name}!</strong>`);
       }
 
@@ -159,8 +224,21 @@
 
       // Check Winner
       if (fighter1.hp <= 0 || fighter2.hp <= 0) {
-        let winner = fighter1.hp > 0 ? fighter1.name : (fighter2.hp > 0 ? fighter2.name : "Draw");
-        logMessages.push(`🏆 <strong>${winner} wins!</strong>`);
+        let winnerIndex = fighter1.hp > 0 ? "1" : (fighter2.hp > 0 ? "2" : "0");
+        let winnerName = fighter1.hp > 0 ? fighter1.name : (fighter2.hp > 0 ? fighter2.name : "Draw");
+        
+        logMessages.push(`🏆 <strong>${winnerName} wins!</strong>`);
+        
+        // Bet Evaluation
+        const userBet = document.querySelector('input[name="bet"]:checked').value;
+        if (winnerIndex === userBet) {
+          winStreak++;
+          logMessages.push(`✨ <strong>Correct Bet! Streak increased to ${winStreak}!</strong>`);
+        } else {
+          winStreak = 0;
+          logMessages.push(`❌ <strong>Incorrect Bet! Streak reset to 0.</strong>`);
+        }
+
         document.getElementById('turnBtn').disabled = true;
         document.getElementById('turnBtn').textContent = "Battle Ended";
       } else {

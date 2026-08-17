@@ -206,7 +206,6 @@ export class BygoneEffigy extends Monster {
 export class VineShambler extends Monster {
     constructor() {
         super("Vine Shambler", 61, 61, "./images/StS2_Vine_Shambler.webp");
-        this.slippery = 9;
     }
 
     swipe(opponent, log) {
