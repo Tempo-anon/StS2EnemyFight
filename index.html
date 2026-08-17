@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>OO Monster Battle Simulator</title>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background: #121212; color: #fff; margin: 20px; }
+    .battlefield { display: flex; justify-content: center; gap: 40px; margin: 20px 0; }
+    .card { background: #1e1e1e; padding: 20px; border-radius: 12px; width: 220px; border: 1px solid #333; position: relative; }
+    .card img { width: 120px; height: 120px; object-fit: contain; margin: 10px 0; background: #2a2a2a; border-radius: 8px; padding: 5px; }
+    .hp-bar { background: #444; height: 18px; border-radius: 9px; overflow: hidden; margin: 10px 0; }
+    .hp-fill { background: #4caf50; height: 100%; width: 100%; transition: width 0.3s; }
+    #img1 {
+    transform: scaleX(-1);
+    }
+    
+    /* Status Badges Styling */
+    .status-container { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; min-height: 32px; margin-top: 8px; }
+    .badge { font-size: 12px; padding: 4px 8px; border-radius: 12px; font-weight: bold; display: inline-flex; align-items: center; gap: 3px; }
+    .badge-block { background: #2575fc; color: #fff; }
+    .badge-str { background: #ff4757; color: #fff; }
+    .badge-weak { background: #ffa502; color: #000; }
+    .badge-vuln { background: #ff6b81; color: #fff; }
+
+    select, button { padding: 8px 16px; font-size: 15px; border-radius: 6px; border: none; cursor: pointer; }
+    button { background: #ff4757; color: white; font-weight: bold; margin: 5px; }
+    button:hover { background: #ff6b81; }
+    button:disabled { background: #555; cursor: not-allowed; }
+    #log { background: #000; padding: 15px; border-radius: 8px; height: 180px; overflow-y: auto; text-align: left; font-family: monospace; border: 1px solid #333; max-width: 600px; margin: 0 auto; }
+  </style>
+</head>
+<body>
+
+  <h1>Object-Oriented Monster Battle</h1>
+
+  <div class="battlefield">
+    <!-- Fighter 1 -->
+    <div class="card">
+      <select id="sel1" onchange="resetBattle()"></select>
+      <img id="img1" src="" alt="Monster 1">
+      <div class="hp-bar"><div id="hp1" class="hp-fill"></div></div>
+      <div id="status1">100 / 100 HP</div>
+      <div id="badges1" class="status-container"></div>
+    </div>
+
+    <!-- Fighter 2 -->
+    <div class="card">
+      <select id="sel2" onchange="resetBattle()"></select>
+      <img id="img2" src="" alt="Monster 2">
+      <div class="hp-bar"><div id="hp2" class="hp-fill"></div></div>
+      <div id="status2">100 / 100 HP</div>
+      <div id="badges2" class="status-container"></div>
+    </div>
+  </div>
+
+  <button id="turnBtn" onclick="nextTurn()">Start Battle</button>
+  <button onclick="resetBattle()">Reset</button>
+
+  <h3>Combat Log</h3>
+  <div id="log"></div>
+
+  <script type="module">
+    import { monsterClasses } from './monsters.js';
+
+    // Populate UI Dropdowns
+    const sel1 = document.getElementById('sel1');
+    const sel2 = document.getElementById('sel2');
+
+    monsterClasses.forEach((ClassRef, index) => {
+      let tempInstance = new ClassRef();
+      sel1.add(new Option(tempInstance.name, index));
+      sel2.add(new Option(tempInstance.name, index));
+    });
+    sel2.selectedIndex = 1;
+
+    // Battle State Variables
+    let fighter1 = null;
+    let fighter2 = null;
+    let currentTurn = 1;
+    let isBattleActive = false;
+
+    window.resetBattle = function() {
+      fighter1 = new monsterClasses[sel1.value]();
+      fighter2 = new monsterClasses[sel2.value]();
+      currentTurn = 1;
+      isBattleActive = false;
+
+      document.getElementById('turnBtn').textContent = "Start Battle";
+      document.getElementById('turnBtn').disabled = false;
+      document.getElementById('log').innerHTML = "<p>Select monsters and click Start Battle!</p>";
+
+      updateUI();
+    }
+
+    function renderBadges(monster, badgeDivId) {
+      const container = document.getElementById(badgeDivId);
+      let badgesHTML = '';
+
+      if (monster.block > 0) {
+        badgesHTML += `<span class="badge badge-block">🛡️ ${monster.block}</span>`;
+      }
+      if (monster.strength !== 0) {
+        badgesHTML += `<span class="badge badge-str">💪 ${monster.strength > 0 ? '+' : ''}${monster.strength}</span>`;
+      }
+      if (monster.weakTurns > 0) {
+        badgesHTML += `<span class="badge badge-weak">🥀 Weak (${monster.weakTurns})</span>`;
+      }
+      if (monster.vulnTurns > 0) {
+        badgesHTML += `<span class="badge badge-vuln">💔 Vuln (${monster.vulnTurns})</span>`;
+      }
+
+      container.innerHTML = badgesHTML;
+    }
+
+    function updateUI() {
+      // Images
+      document.getElementById('img1').src = fighter1.image;
+      document.getElementById('img2').src = fighter2.image;
+
+      // HP & Health Bars
+      document.getElementById('status1').textContent = `${fighter1.hp} / ${fighter1.maxHp} HP`;
+      document.getElementById('status2').textContent = `${fighter2.hp} / ${fighter2.maxHp} HP`;
+      document.getElementById('hp1').style.width = `${Math.max(0, (fighter1.hp / fighter1.maxHp) * 100)}%`;
+      document.getElementById('hp2').style.width = `${Math.max(0, (fighter2.hp / fighter2.maxHp) * 100)}%`;
+
+      // Status Effect Badges
+      renderBadges(fighter1, 'badges1');
+      renderBadges(fighter2, 'badges2');
+    }
+
+    window.nextTurn = function() {
+      let logDiv = document.getElementById('log');
+      let logMessages = [];
+
+      if (!isBattleActive) {
+        isBattleActive = true;
+        document.getElementById('turnBtn').textContent = "Next Turn";
+        logDiv.innerHTML = "";
+        logMessages.push(`⚔️ <strong>Battle Started: ${fighter1.name} vs ${fighter2.name}!</strong>`);
+      }
+
+      logMessages.push(`--- Turn ${currentTurn} ---`);
+
+      // Fighter 1 Turn
+      fighter1.onTurn(currentTurn, fighter2, logMessages);
+      fighter1.endTurn(currentTurn, fighter2, logMessages);
+      
+      // Fighter 2 Turn (if still alive)
+      if (fighter2.hp > 0) {
+        fighter2.onTurn(currentTurn, fighter1, logMessages);
+        fighter2.endTurn(currentTurn, fighter1, logMessages);
+      }
+
+      // Check Winner
+      if (fighter1.hp <= 0 || fighter2.hp <= 0) {
+        let winner = fighter1.hp > 0 ? fighter1.name : (fighter2.hp > 0 ? fighter2.name : "Draw");
+        logMessages.push(`🏆 <strong>${winner} wins!</strong>`);
+        document.getElementById('turnBtn').disabled = true;
+        document.getElementById('turnBtn').textContent = "Battle Ended";
+      } else {
+        currentTurn++;
+      }
+
+      // Append logs & scroll
+      logMessages.forEach(msg => {
+        logDiv.innerHTML += `<p style="margin:4px 0">${msg}</p>`;
+      });
+      logDiv.scrollTop = logDiv.scrollHeight;
+
+      updateUI();
+    }
+
+    // Initial load
+    resetBattle();
+  </script>
+</body>
+</html>
