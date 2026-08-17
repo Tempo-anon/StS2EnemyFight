@@ -27,7 +27,6 @@ export class SludgeSpinner extends Monster {
         super.onTurn(turn, opponent, log);
         if (turn == 1) {
             this.oilSpray(opponent, log);
-            this.lastMove == "oilSpray";
         } else {
             let availableMoves = [this.oilSpray, this.slam, this.rage];
             
@@ -120,6 +119,7 @@ export class HauntedShip extends Monster {
 export class PunchConstruct extends Monster {
     constructor() {
         super("Punch Construct", 55, 55, "./images/StS2_Punch_Construct.webp");
+        this.artifact = 1;
     }
 
     ready(log) {

@@ -169,6 +169,12 @@
       if (monster.slippery > 0) {
         badgesHTML += `<span class="badge badge-slippery">💧 Slippery (${monster.slippery})</span>`;
       }
+      if (monster.plating > 0) {
+        badgesHTML += `<span class="badge badge-plating">🪖 Plating (${monster.plating})</span>`;
+      }
+      if (monster.soaring == true) {
+        badgesHTML += `<span class="badge badge-soaring">🦉 Soaring </span>`;
+      }
 
       container.innerHTML = badgesHTML;
     }

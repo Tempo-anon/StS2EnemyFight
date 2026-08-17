@@ -349,21 +349,21 @@ export class CeremonialBeast extends Monster {
         super.onTurn(turn, opponent, log);
         if (turn == 1) {
             this.stamp(log);
-        }
-
-        if (this.phase2 == false) {
-            if (this.hp <= 150) {
-                this.stun(log);
-            } else {
-                this.plow(opponent, log);
-            }
         } else {
-            if (turn % 4 == 1) {
-                this.beastCry(log);
-            } else if (turn % 4 == 2) {
-                this.stomp(opponent, log);
+            if (this.phase2 == false) {
+                if (this.hp <= 150) {
+                    this.stun(log);
+                } else {
+                    this.plow(opponent, log);
+                }
             } else {
-                this.crush(opponent, log);
+                if (turn % 4 == 1) {
+                    this.beastCry(log);
+                } else if (turn % 4 == 2) {
+                    this.stomp(opponent, log);
+                } else {
+                    this.crush(opponent, log);
+                }
             }
         }
     }

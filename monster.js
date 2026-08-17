@@ -1,18 +1,18 @@
 export class Monster {
     constructor(name, hp, maxHp, image) {
-    this.name = name;
-    this.hp = hp;
-    this.maxHp = maxHp;
-    this.strength = 0;
-    this.image = image;
-    this.weakTurns = 0;
-    this.vulnTurns = 0;
-    this.block = 0;
-    this.artifact = 0;
-    this.slippery = 0;
-    this.intangible = 0;
-    this.plating = 0;
-
+        this.name = name;
+        this.hp = hp;
+        this.maxHp = maxHp;
+        this.strength = 0;
+        this.image = image;
+        this.weakTurns = 0;
+        this.vulnTurns = 0;
+        this.block = 0;
+        this.artifact = 0;
+        this.slippery = 0;
+        this.intangible = 0;
+        this.plating = 0;
+        this.soaring = false;
     }
 
     onTurn(turn, opponent, log) {
@@ -43,6 +43,11 @@ export class Monster {
         } else {
             let dmgAfterBlock = dmgAfterVuln - opponent.block;
             opponent.block = 0;
+
+            if (opponent.soaring == true) {
+                log.push(`🦉 ${opponent.name} takes half damage!`);
+                dmgAfterBlock = Math.floor(dmgAfterBlock / 2);
+            }
 
             if (opponent.slippery > 0) {
                 log.push(`💧 ${opponent.name} is slippery!`);
@@ -75,6 +80,11 @@ export class Monster {
     buffStr(log, strAmt) {
         this.strength += strAmt;
         log.push(`💪 ${this.name} gains ${strAmt} strength!`);
+    }
+
+    heal(log, healAmt) {
+        this.hp += healAmt;
+        log.push(`❇️ ${this.name} healed ${healAmt} HP!`);
     }
 
     applyWeak(opponent, log, weakAmt) {
