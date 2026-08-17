@@ -198,6 +198,112 @@ export class SoulNexus extends Monster {
     }
 }
 
+// TODO: torchhead minion
+export class Queen extends Monster {
+    constructor() {
+        super("Queen", 400, 400, "./images/StS2_Queen.webp");
+    }
+
+    puppetStrings(log) {
+        log.push("⛓️ Queen cast Chains of Binding! (But nothing happened)");
+    }
+    // TODO: Frail?
+    youreMine(opponent, log) {
+        this.applyVuln(opponent, log, 1);
+        this.applyWeak(opponent, log, 99);
+        this.applyVuln(opponent, log, 99);
+    }
+    offWithYourHead(opponent, log) {
+        this.multiAtk(opponent, log, 3, 5);
+    }
+    execution(opponent, log) {
+        this.attack(opponent, log, 15);
+    }
+    enrage(log) {
+        this.buffStr(log, 2);
+    }
+    onTurn(turn, opponent, log) {
+        super.onTurn(turn, opponent, log);
+        if (turn == 1) {
+            this.puppetStrings(log);
+            return;
+        }
+        if (turn == 2) {
+            this.youreMine(opponent, log);
+            return;
+        }
+
+        if (turn % 3 == 1) {
+            this.offWithYourHead(opponent, log);
+        } else if (turn % 3 == 2) {
+            this.execution(opponent, log);
+        } else {
+            this.enrage(log);
+        }
+    }
+}
+
+export class TestSubject extends Monster {
+    constructor() {
+        super("Test Subject (Phase 1)", 100, 100, "./images/StS2_Test_Subject.webp");
+    }
+    bite(opponent, log) {
+        this.attack(opponent, log, 20);
+    }
+    skullBash(opponent, log) {
+        this.attack(opponent, log, 14);
+        this.applyVuln(opponent, log, 1);
+    }
+    onTurn(turn, opponent, log) {
+        super.onTurn(turn, opponent, log);
+        if (turn % 2 == 1) {
+            this.bite(opponent, log);
+        } else {
+            this.skullBash(opponent, log);
+        }
+    }
+}
+
+export class TestSubjectPhase2 extends Monster {
+    constructor() {
+        super("Test Subject (Phase 2)", 200, 200, "./images/StS2_Test_Subject_Phase_2.webp");
+    }
+    multiClaw(turn, opponent, log) {
+        this.multiAtk(opponent, log, 10, 2 + turn);
+    }
+    onTurn(turn, opponent, log) {
+        super.onTurn(turn, opponent, log);
+        this.multiClaw(turn, opponent, log);
+    }
+}
+
+export class TestSubjectPhase3 extends Monster {
+    constructor() {
+        super("Test Subject (Phase 3)", 300, 300, "./images/StS2_Test_Subject_Phase_3.webp");
+        this.nemesis = true;
+    }
+    lacerate(opponent, log) {
+        this.multiAtk(opponent, log, 10, 3);
+    }
+    bigPounce(opponent, log) {
+        this.attack(opponent, log, 45);
+    }
+    burningGrowl(log) {
+        log.push("🔥 Test Subject (Phase 3) shuffled burns into the deck! (But nothing happened)");
+    }
+    onTurn(turn, opponent, log) {
+        super.onTurn(turn, opponent, log);
+        this.nemesis = !this.nemesis;
+        if (turn % 3 == 1) {
+            this.lacerate(opponent, log);
+        } else if (turn % 3 == 2) {
+            this.bigPounce(opponent, log);
+        } else {
+            this.burningGrowl(log);
+        }
+    }
+}
+
 export class Aeonglass extends Monster {
     constructor() {
         super("Aeonglass", 512, 512, "./images/800px-StS2_Aeonglass.png");

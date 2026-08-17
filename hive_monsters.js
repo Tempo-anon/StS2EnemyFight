@@ -153,7 +153,7 @@ export class Decimillipede extends Monster {
         this.hive = 1;
     }
     bulk(opponent, log) {
-        this.attack(opponent, log, 2);
+        this.attack(opponent, log, 6);
         this.buffStr(log, 2);
     }
     writhe(opponent, log) {
@@ -169,6 +169,80 @@ export class Decimillipede extends Monster {
         this.writhe(opponent, log);
         this.outgas(opponent, log);
         this.bulk(opponent, log);
+    }
+}
+
+// TODO: Crab mechanics
+export class Crusher extends Monster {
+    constructor() {
+        super("Crusher", 209, 209, "./images/Crusher.png");
+    }
+    thrash(opponent, log) {
+        this.attack(opponent, log, 12);
+    }
+    enlargingStrike(opponent, log) {
+        this.attack(opponent, log, 4);
+    }
+    bugSting(opponent, log) {
+        this.multiAtk(opponent, log, 6, 2);
+    }
+    adapt(log) {
+        this.buffStr(log, 2);
+    }
+    guardedStrike(opponent, log) {
+        this.attack(opponent, log, 12);
+        this.gainBlock(log, 18);
+    }
+
+    onTurn(turn, opponent, log) {
+        super.onTurn(turn, opponent, log);
+        if (turn % 5 == 1) {
+            this.thrash(opponent, log);
+        } else if (turn % 5 == 2) {
+            this.enlargingStrike(opponent, log);
+        } else if (turn % 5 == 3) {
+            this.bugSting(opponent, log);
+        } else if (turn % 5 == 4) {
+            this.adapt(log);
+        } else {
+            this.guardedStrike(opponent, log);
+        }
+    }
+}
+
+export class Rocket extends Monster {
+    constructor() {
+        super("Rocket", 199, 199, "./images/StS2_Rocket.webp");
+    }
+    targetingReticle(opponent, log) {
+        this.attack(opponent, log, 3);
+    }
+    precisionBeam(opponent, log) {
+        this.attack(opponent, log, 18);
+    }
+    chargeUp(log) {
+        this.buffStr(log, 2);
+    }
+    laser(opponent, log) {
+        this.attack(opponent, log, 31);
+    }
+    recharge(log) {
+        log.push("💤 Rocket is recharging!");
+    }
+
+    onTurn(turn, opponent, log) {
+        super.onTurn(turn, opponent, log);
+        if (turn % 5 == 1) {
+            this.targetingReticle(opponent, log);
+        } else if (turn % 5 == 2) {
+            this.precisionBeam(opponent, log);
+        } else if (turn % 5 == 3) {
+            this.chargeUp(log);
+        } else if (turn % 5 == 4) {
+            this.laser(opponent, log);
+        } else {
+            this.recharge(log);
+        }
     }
 }
 

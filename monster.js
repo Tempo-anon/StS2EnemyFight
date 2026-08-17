@@ -13,6 +13,7 @@ export class Monster {
         this.intangible = 0;
         this.plating = 0;
         this.soaring = false;
+        this.nemesis = false;
     }
 
     onTurn(turn, opponent, log) {
@@ -55,7 +56,7 @@ export class Monster {
                 opponent.slippery -= 1;
             }
 
-            if (opponent.intangible > 0) {
+            if (opponent.intangible > 0 || opponent.nemesis) {
                 log.push(`👻 ${opponent.name} is intangible!`);
                 dmgAfterBlock = 1;
             }
