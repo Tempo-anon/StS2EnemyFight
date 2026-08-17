@@ -108,6 +108,12 @@
       if (monster.vulnTurns > 0) {
         badgesHTML += `<span class="badge badge-vuln">💔 Vuln (${monster.vulnTurns})</span>`;
       }
+      if (monster.artifact > 0) {
+        badgesHTML += `<span class="badge badge-artifact">⚙️ Artifact (${monster.artifact})</span>`;
+      }
+      if (monster.slippery > 0) {
+        badgesHTML += `<span class="badge badge-slippery">💧 Slippery (${monster.slippery})</span>`;
+      }
 
       container.innerHTML = badgesHTML;
     }
