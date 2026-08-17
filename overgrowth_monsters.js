@@ -19,14 +19,14 @@ export class Nibbit extends Monster {
     }
 
     onTurn(turn, opponent, log) {
-    super.onTurn(turn, opponent, log);
-    if (turn % 3 == 1) {
-        this.butt(opponent, log);
-    } else if (turn % 3 == 2) {
-        this.hesitantSlice(opponent, log);
-    } else {
-        this.hiss(log);
-    }
+        super.onTurn(turn, opponent, log);
+        if (turn % 3 == 1) {
+            this.butt(opponent, log);
+        } else if (turn % 3 == 2) {
+            this.hesitantSlice(opponent, log);
+        } else {
+            this.hiss(log);
+        }
     }
 }
 
@@ -68,6 +68,7 @@ export class ShrinkerBeetle extends Monster {
         this.attack(opponent, log, 13);
     }
     onTurn(turn, opponent, log) {
+        super.onTurn(turn, opponent, log);
         if (turn == 1) {
             this.shrinker(opponent, log);
         } else {
@@ -96,6 +97,7 @@ export class CubexConstruct extends Monster {
         this.multiAtk(opponent, log, 5, 2);
     }
     onTurn(turn, opponent, log) {
+        super.onTurn(turn, opponent, log);
         if (turn == 1) {
             this.chargeUp(log);
         } else {
@@ -193,6 +195,7 @@ export class BygoneEffigy extends Monster {
         this.attack(opponent, log, 13);
     }
     onTurn(turn, opponent, log) {
+        super.onTurn(turn, opponent, log);
         if (turn == 1) {
             this.sleep(log);
         } else if (turn == 2) {
