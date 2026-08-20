@@ -1,4 +1,32 @@
 import { Monster } from "./monster.js";
+const scrollCount = 3;
+export class ScrollOfBiting extends Monster {
+    constructor() {
+        super(`Scroll of Biting (x ${scrollCount})`, 31 * scrollCount, 38 * scrollCount, "./images/StS2_Scroll_of_Biting.webp");
+        this.randTurn = Math.floor(Math.random() * 3) + 1;
+    }
+    chomp(opponent, log) {
+        this.attack(opponent, log, scrollCount * 14);
+    }
+    moreTeeth(log) {
+        this.buffStr(log, 2);
+    }
+    chew(opponent, log) {
+        this.multiAtk(opponent, log, scrollCount * 5, 2);
+    }
+    onTurn(turn, opponent, log) {
+        super.onTurn(turn, opponent, log);
+        
+        if (this.randTurn % 3 == 1) {
+            this.chomp(opponent, log);
+        } else if (this.randTurn % 3 == 2) {
+            this.moreTeeth(log);
+        }  else {
+            this.chew(opponent, log);
+        }
+        this.randTurn += 1;
+    }
+}
 
 export class DevotedSculptor extends Monster {
     constructor() {
@@ -379,6 +407,43 @@ export class Aeonglass extends Monster {
             this.eyeLasers(opponent, log);
         } else {
             this.increasingIntensity(log);
+        }
+    }
+}
+
+export class Doormaker extends Monster {
+    constructor() {
+        super("Doormaker", 489, 489, "./images/800px-StS2_Doormaker-Hunger.webp");
+    }
+    dramaticOpen(log) {
+        this.hp = 489;
+        this.weakTurns = 0;
+        this.vulnTurns = 0;
+        this.shrink = false;
+        log.push("🚪 The door is opened...")
+    }
+    hunger(opponent, log) {
+        this.attack(opponent, log, 30);
+    }
+    scrutiny(opponent, log) {
+        this.attack(opponent, log, 24);
+    }
+    grasp(opponent, log) {
+        this.multiAtk(opponent, log, 10, 2);
+        this.buffStr(log, 3);
+    }
+    onTurn(turn, opponent, log) {
+        super.onTurn(turn, opponent, log);
+        if (turn == 1) {
+            this.dramaticOpen(log);
+            return;
+        }
+        if ((turn - 1) % 3 == 1) {
+            this.hunger(opponent, log);
+        } else if ((turn - 1) % 3 == 2) {
+            this.scrutiny(opponent, log);
+        } else {
+            this.grasp(opponent, log);
         }
     }
 }
