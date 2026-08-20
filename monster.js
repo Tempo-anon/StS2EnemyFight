@@ -19,6 +19,7 @@ export class Monster {
         this.exoskeleton = false;
         this.dmgCap = false;
         this.dmgCapAmt = 0;
+        this.curlUp = 0;
     }
 
     onTurn(turn, opponent, log) {
@@ -89,7 +90,11 @@ export class Monster {
             log.push(`🌵 ${this.name} takes ${opponent.thorns} damage from thorns!`)
         }
 
-        
+        if (opponent.curlUp > 0) {
+            log.push(`🐞 ${opponent.name} curled up!`);
+            opponent.gainBlock(log, opponent.curlUp);
+            opponent.curlUp = 0;
+        }
     }
 
     multiAtk(opponent, log, dmg, times) {

@@ -58,6 +58,56 @@ export class SlimedBerserker extends Monster {
     }
 }
 
+export class FrogKnight extends Monster {
+    constructor() {
+        super("Frog Knight", 191, 191, "./images/StS2_Frog_Knight.webp");
+        this.plating = 15;
+        this.beetleCharged = false;
+        this.lastMove = "none";
+    }
+    
+    tongueLash(opponent, log) {
+        this.attack(opponent, log, 13);
+        // TODO: Frail
+        this.applyVuln(opponent, log, 2);
+        this.lastMove = "tongueLash";
+    }
+    strikeDownEvil(opponent, log) {
+        this.attack(opponent, log, 21);
+        this.lastMove = "strikeDownEvil";
+    }
+    forTheQueen(log) {
+        this.buffStr(log, 5);
+        this.lastMove = "forTheQueen";
+    }
+    beetleCharge(opponent, log) {
+        this.attack(opponent, log, 25);
+        this.beetleCharged = true;
+        this.lastMove = "beetleCharge";
+    }
+    onTurn(turn, opponent, log) {
+        super.onTurn(turn, opponent, log);
+        
+        if (this.lastMove == "tongueLash") {
+            this.strikeDownEvil(opponent, log);
+            return;
+        }
+        if (this.lastMove == "strikeDownEvil") {
+            this.forTheQueen(log);
+            return;
+        }
+        if (this.lastMove == "forTheQueen") {
+            if (this.beetleCharged == false && this.hp < Math.floor(191 / 2)) {
+                this.beetleCharge(opponent, log);
+            } else {
+                this.tongueLash(opponent, log);
+            }
+            return;
+        }
+        this.tongueLash(opponent, log);
+    }
+}
+
 export class GlobeHead extends Monster {
     constructor() {
         super("Globe Head", 148, 148, "./images/StS2_Globe_Head.webp");

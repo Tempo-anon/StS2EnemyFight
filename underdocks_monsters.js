@@ -25,7 +25,7 @@ export class Seapunk extends Monster {
         } else if (turn % 3 == 2) {
             this.spinningKick(opponent, log);
         } else {
-            this.bubbleBurp(opponent, log);
+            this.bubbleBurp(log);
         }
     }
 }

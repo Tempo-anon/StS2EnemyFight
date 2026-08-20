@@ -77,6 +77,35 @@ export class SpinyToad extends Monster {
     }
 }
 
+export class LouseProgenitor extends Monster {
+    constructor() {
+        super("Louse Progenitor", 134, 136, "./images/StS2_Louse_Progenitor.webp");
+        this.curlUp = 14;
+    }
+    webCannon(opponent, log) {
+        this.attack(opponent, log, 9);
+        //TODO: FRAIL
+        this.applyVuln(opponent, log, 2);
+    }
+    curlAndGrow(log) {
+        this.gainBlock(log, 14);
+        this.buffStr(log, 5);
+    }
+    pounce(opponent, log) {
+        this.attack(opponent, log, 14);
+    }
+    onTurn(turn, opponent, log) {
+        super.onTurn(turn, opponent, log);
+        if (turn % 3 == 1) {
+            this.webCannon(opponent, log);
+        } else if (turn % 3 == 2) {
+            this.curlAndGrow(log);
+        }  else {
+            this.pounce(opponent, log);
+        }
+    }
+}
+
 export class HunterKiller extends Monster {
     constructor() {
         super("Hunter Killer", 121, 121, "./images/StS2_Hunter_Killer.webp");
