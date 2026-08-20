@@ -75,6 +75,36 @@ export class SludgeSpinner extends Monster {
     }
 }
 
+export class Toadpole extends Monster {
+    constructor() {
+        super("Toadpole", 21, 25, "./images/StS2_Toadpole.webp");
+    }
+    spikeSpit(opponent, log) {
+        if (this.thorns > 0) {
+            this.thorns = 0;
+            log.push("Toadpole lost its spikes!");
+        }
+        this.multiAtk(opponent, log, 3, 3);
+    }
+    whirl(opponent, log) {
+        this.attack(opponent, log, 7);
+    }
+    spiken(log) {
+        this.thorns += 2;
+        log.push("🌵 Toadpole gained spikes!");
+    }
+    onTurn(turn, opponent, log) {
+        super.onTurn(turn, opponent, log);
+        if (turn % 3 == 1) {
+            this.whirl(opponent, log);
+        } else if (turn % 3 == 2) {
+            this.spiken(log);
+        }  else {
+            this.spikeSpit(opponent, log);
+        }
+    }
+}
+
 export class CalcifiedCultist extends Monster {
     constructor() {
         super("Calcified Cultist", 38, 41, "./images/StS2_Calcified_Cultist.webp");
@@ -253,6 +283,39 @@ export class SewerClam extends Monster {
             this.pressurize(log);
         }
         
+    }
+}
+
+export class SkulkingColony extends Monster {
+    constructor() {
+        super("Skulking Colony", 75, 75, "./images/StS2_Skulking_Colony.webp");
+        this.dmgCap = true;
+        this.dmgCapAmt = 20;
+    }
+
+    zoom(opponent, log) {
+        this.attack(opponent, log, 14);
+    }
+
+    inertia(opponent, log) {
+        this.attack(opponent, log, 9);
+        this.buffStr(log, 2);
+    }
+
+    piercingStabs(opponent, log) {
+        this.multiAtk(opponent, log, 7, 2);
+    }
+
+    onTurn(turn, opponent, log) {
+        super.onTurn(turn, opponent, log);
+        this.dmgCapAmt = 20;
+        if (turn % 4 == 3) {
+            this.inertia(opponent, log);
+        } else if (turn % 4 == 0) {
+            this.piercingStabs(opponent, log);
+        } else {
+            this.zoom(opponent, log);
+        }
     }
 }
 

@@ -183,6 +183,9 @@
       if (monster.strength !== 0) {
         badgesHTML += `<span class="badge badge-str">💪 ${monster.strength > 0 ? '+' : ''}${monster.strength}</span>`;
       }
+      if (monster.shrink) {
+        badgesHTML += `<span class="badge badge-shrunk">🪲 Shrunk</span>`;
+      }
       if (monster.weakTurns > 0) {
         badgesHTML += `<span class="badge badge-weak">🥀 Weak (${monster.weakTurns})</span>`;
       }
@@ -198,6 +201,9 @@
       if (monster.plating > 0) {
         badgesHTML += `<span class="badge badge-plating">🪖 Plating (${monster.plating})</span>`;
       }
+      if (monster.thorns > 0) {
+        badgesHTML += `<span class="badge badge-thorns">🌵 Thorns (${monster.thorns})</span>`;
+      }
       if (monster.steam > 0) {
         badgesHTML += `<span class="badge badge-plating">💨 Steam Eruption (${monster.steam})</span>`;
       }
@@ -206,6 +212,12 @@
       }
       if (monster.soaring == true) {
         badgesHTML += `<span class="badge badge-soaring">🦉 Soaring </span>`;
+      }
+      if (monster.exoskeleton == true) {
+        badgesHTML += `<span class="badge badge-dmgCap">🪳 Exoskeleton (9)</span>`;
+      }
+      if (monster.dmgCap == true) {
+        badgesHTML += `<span class="badge badge-dmgCap">🥟 Damage cap (${monster.dmgCapAmt})</span>`;
       }
 
       container.innerHTML = badgesHTML;

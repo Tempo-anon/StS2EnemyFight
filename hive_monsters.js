@@ -1,5 +1,82 @@
 import { Monster } from "./monster.js";
 
+export class Exoskeleton extends Monster {
+    constructor() {
+        super("Exoskeleton", 24, 28, "./images/StS2_Exoskeleton.webp");
+        this.exoskeleton = true;
+        this.lastMove = "None";
+    }
+    skitter(opponent, log) {
+        this.multiAtk(opponent, log, 1, 3);
+        this.lastMove = "skitter";
+    }
+    mandibles(opponent, log) {
+        this.attack(opponent, log, 8);
+        this.lastMove = "mandibles";
+    }
+    enrage(opponent, log) {
+        this.buffStr(log, 2);
+        this.lastMove = "enrage";
+    }
+    
+    onTurn(turn, opponent, log) {
+        super.onTurn(turn, opponent, log);
+
+        if (turn == 1) {
+            let availableMoves = [this.skitter, this.mandibles, this.enrage];
+            const selectedMove = availableMoves[Math.floor(Math.random() * availableMoves.length)];
+            selectedMove.call(this, opponent, log);
+            return;
+        }
+        if (this.lastMove == "skitter") {
+            this.mandibles(opponent, log);
+            return;
+        }
+        if (this.lastMove == "mandibles") {
+            this.enrage(opponent, log);
+            return;
+        }
+
+        if (this.lastMove = "enrage") {
+            let availableAttackMoves = [this.skitter, this.mandibles];
+            const selectedAttackMove = availableAttackMoves[Math.floor(Math.random() * availableAttackMoves.length)];
+            selectedAttackMove.call(this, opponent, log);
+            return;
+        }
+    }
+}
+
+export class SpinyToad extends Monster {
+    constructor() {
+        super("Spiny Toad", 116, 119, "./images/StS2_Spiny_Toad.webp");
+    }
+    protrudingSpikes(log) {
+        this.thorns += 5;
+        log.push("🌵 Spiny Toad gained spikes!");
+
+    }
+    spikeExplosion(opponent, log) {
+        if (this.thorns > 0) {
+            this.thorns = 0;
+            log.push("Spiny Toad lost its spikes!");
+        }
+        this.attack(opponent, log, 23);
+    }
+    tongueLash(opponent, log) {
+        this.attack(opponent, log, 17);
+    }
+    onTurn(turn, opponent, log) {
+        super.onTurn(turn, opponent, log);
+        if (turn % 3 == 1) {
+            this.protrudingSpikes(log);
+        } else if (turn % 3 == 2) {
+            this.spikeExplosion(opponent, log);
+        }  else {
+            this.tongueLash(opponent, log);
+        }
+    }
+}
+
 export class HunterKiller extends Monster {
     constructor() {
         super("Hunter Killer", 121, 121, "./images/StS2_Hunter_Killer.webp");
@@ -25,7 +102,7 @@ export class HunterKiller extends Monster {
             return;
         }
 
-        if (this.lastMove = "bite") {
+        if (this.lastMove == "bite") {
             this.puncture(opponent, log);
             return;
         }

@@ -58,8 +58,7 @@ export class ShrinkerBeetle extends Monster {
         super("Shrinker Beetle", 38, 40, "./images/StS2_Shrinker_Beetle.webp");
     }
     shrinker(opponent, log) {
-        // TODO: Change weak with shrinker
-        this.applyWeak(opponent, log, 99); 
+        this.applyShrink(opponent, log);
     }
     chomp(opponent, log) {
         this.attack(opponent, log, 7);
@@ -77,6 +76,34 @@ export class ShrinkerBeetle extends Monster {
             } else {
                 this.stomp(opponent, log);
             }
+        }
+    }
+}
+
+export class Inklet extends Monster {
+    constructor() {
+        super("Inklet", 11, 17, "./images/StS2_Inklet.webp");
+        this.slippery = 1;
+    }
+    jab(opponent, log) {
+        this.attack(opponent, log, 3);
+    }
+    windupPunch(opponent, log) {
+        this.multiAtk(opponent, log, 2, 3);
+    }
+    piercingGaze(opponent, log) {
+        this.attack(opponent, log, 10);
+    }
+    
+    onTurn(turn, opponent, log) {
+        super.onTurn(turn, opponent, log);
+        let availableMoves = [this.windupPunch, this.piercingGaze];
+        const selectedMove = availableMoves[Math.floor(Math.random() * availableMoves.length)];
+
+        if (turn % 2 == 1) {
+            this.jab(opponent, log);
+        } else {
+            selectedMove.call(this, opponent, log);
         }
     }
 }
